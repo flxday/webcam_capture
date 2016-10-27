@@ -3,13 +3,15 @@
 #include <iostream>
 #include <cstdlib>
 
-int main(int argc, char *argv[]) 
-{
+int main (int argc, char *argv[]) {
 	//OpenCV video capture object
     cv::VideoCapture camera;
 	
 	//OpenCV image object
     cv::Mat image;
+
+    //cv::Mat Subimage;
+    //cv::Rect roi;
 	
 	//camera id . Associated to device number in /dev/videoX
 	int cam_id; 
@@ -48,9 +50,44 @@ int main(int argc, char *argv[])
             std::cout << "No frame" << std::endl;
             cv::waitKey();
         }
+
+         // Pixel central */
+    	// std::cout << "Central pixel is (" << image.cols/2 << "," << image.rows/2 << ")" << std::endl; */
+
+    	int pixel_y = image.rows/2;
+
+		int pixel_x = image.cols/2;
+
+    	//Get pixel 3 channel values
+		cv::Vec3b intensity = image.at<cv::Vec3b>(pixel_y, pixel_x);
+		int blue = intensity.val[0];
+		int green = intensity.val[1];
+		int red = intensity.val[2];
+
+
+		//Print image dimensions */
+		std::cout<<"Image size is: "<<image.rows<<"x"<<image.cols<<std::endl;
+
+		//Print central pixel coordinates
+		std::cout<<"The central pixel is at: "<<pixel_y<<"x"<<pixel_x<<std::endl;
+
+		//Print central pixel 3 original channel values
+		std::cout<<"And its original 3 channel values are: "<<std::endl;
+		std::cout<<"Blue: "<<blue<<" Green: "<<green<<" Red: "<<red<<std::endl;
+
+		//Set black to the central pixel and its neighbors
+		for (int y = pixel_y - 4; y <= pixel_y + 4; y ++) {
+    
+			for (int x = pixel_x - 4; x <= pixel_x + 4; x ++) {
         
+				image.at<cv::Vec3b>(y, x) = 0;
+				
+    			}
+		}
+
         //show image in a window
         cv::imshow("Output Window", image);
+
 		
 		//print image dimensions
 		std::cout << "image size is: " << image.rows << "x" << image.cols << std::endl; 
